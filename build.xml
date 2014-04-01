@@ -1,0 +1,26 @@
+<project name="final" default="deploy" >
+
+ <target name="compile">
+   <javac srcdir="src" destdir="classes">
+		<classpath>
+			<pathelement location = "/usr/share/java/mysql-connector-java.jar"/>
+			<pathelement location = "/usr/share/java/servlet.jar"/>	
+			<pathelement location = "/usr/share/java/jsp.jar"/>	
+			<pathelement location = "/usr/share/java/tomcat6-jsp-2.1-api.jar"/>
+			<pathelement location = "/usr/share/java/tomcat6/tomcat-coyote-6.0.24.jar"/>
+			<pathelement location = "/usr/share/java/tomcat6/catalina-6.0.24.jar"/>
+			<pathelement location = "/home/student/final/lib/tomcat-coyote-7.0.5.jar"/>
+		</classpath>
+	</javac>
+ </target>
+ 
+ <!-- package the app into a WAR file and deploy -->
+ <target name="deploy" depends="compile">
+    <war webxml="web.xml" destfile="ThePost.war" basedir="web">
+       <classes dir="classes" />
+       <lib dir="lib" />
+    </war>
+    <copy file="ThePost.war" todir="/var/lib/tomcat6/webapps" />
+ </target>
+
+</project>
