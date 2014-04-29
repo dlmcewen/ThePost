@@ -1,6 +1,12 @@
 <project name="final" default="deploy" >
 
- <target name="compile">
+<target name="copyImagesDir">
+	<copy todir="web/images" >  
+    	<fileset dir="/var/lib/tomcat6/webapps/ThePost/images"/>  
+	</copy>
+</target>
+
+ <target name="compile" depends="copyImagesDir">
    <javac srcdir="src" destdir="classes">
 		<classpath>
 			<pathelement location = "/usr/share/java/mysql-connector-java.jar"/>
@@ -10,12 +16,46 @@
 			<pathelement location = "/usr/share/java/tomcat6/tomcat-coyote-6.0.24.jar"/>
 			<pathelement location = "/usr/share/java/tomcat6/catalina-6.0.24.jar"/>
 			<pathelement location = "/home/student/final/lib/tomcat-coyote-7.0.5.jar"/>
+			<pathelement location = "/home/student/final/lib/gson-2.2.4.jar"/>
 		</classpath>
 	</javac>
  </target>
  
+ <target name="test_compile" depends="compile">
+   <javac srcdir="test_src" destdir="test_classes" >
+     <classpath>
+       <pathelement location="/usr/share/java/junit4.jar"/>
+	   <pathelement location = "/usr/share/java/mysql-connector-java.jar"/>
+		<pathelement location = "/usr/share/java/servlet.jar"/>	
+		<pathelement location = "/usr/share/java/jsp.jar"/>	
+		<pathelement location = "/usr/share/java/tomcat6-jsp-2.1-api.jar"/>
+		<pathelement location = "/usr/share/java/tomcat6/tomcat-coyote-6.0.24.jar"/>
+		<pathelement location = "/usr/share/java/tomcat6/catalina-6.0.24.jar"/>
+		<pathelement location = "/home/student/final/lib/tomcat-coyote-7.0.5.jar"/>
+		<pathelement location = "/home/student/final/lib/gson-2.2.4.jar"/>
+       <pathelement location="classes"/>
+     </classpath>
+   </javac>
+ </target>
+
+ <target name="test" depends="test_compile">
+   <junit printsummary="on">
+     <formatter type="plain" usefile="no"/>
+     <classpath>
+       <pathelement location="/usr/share/java/junit4.jar"/>
+	<pathelement location="/usr/share/java/mysql-connector-java.jar"/>
+       <pathelement location="classes"/>
+       <pathelement location="test_classes"/>
+     </classpath>
+     <test name="thepost.DAOTest"/>
+	 <test name="thepost.ItemTest"/>
+	 <test name="thepost.UserTest"/>
+	 <test name="thepost.ListBeanTest"/>
+   </junit>
+ </target>
+ 
  <!-- package the app into a WAR file and deploy -->
- <target name="deploy" depends="compile">
+ <target name="deploy" depends="test">
     <war webxml="web.xml" destfile="ThePost.war" basedir="web">
        <classes dir="classes" />
        <lib dir="lib" />
@@ -24,3 +64,6 @@
  </target>
 
 </project>
+
+
+

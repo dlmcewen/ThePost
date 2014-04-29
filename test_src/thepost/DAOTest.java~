@@ -1,0 +1,302 @@
+package thepost;
+
+import java.sql.DriverManager;
+import java.sql.SQLException;
+
+//import org.junit.Before;
+//import org.junit.Test;
+
+import java.io.UnsupportedEncodingException;
+import java.security.NoSuchAlgorithmException;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import junit.framework.TestCase;
+
+public class DAOTest extends TestCase {
+	ThePostDAO db = null;
+	PreparedStatement clearItemStatement;
+
+
+	/**
+	 * Deletes previous information from the database prior to testing
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		Connection conn = null;
+		try{
+			String url = "jdbc:mysql://localhost/postTest";
+			String uname = "user";
+			String pwd = "password";
+
+			Class.forName("com.mysql.jdbc.Driver");
+			try{
+				conn = DriverManager.getConnection(url,uname,pwd);
+				clearItemStatement = conn.prepareStatement("delete from Item");
+				PreparedStatement clearUserStatement = conn.prepareStatement("delete from User");
+				clearItemStatement.execute();
+				clearUserStatement.execute();	
+				
+			}catch (SQLException ex){
+				ex.printStackTrace();
+			}
+		}catch(ClassNotFoundException e){
+			System.out.println(e);
+		}
+	}
+
+	/**
+	 * Tests if the db is set up and instantiated correctly and successfully
+	 * 
+	 */
+	public void testDAO() {
+		try{
+			db=new ThePostDAO("postTest");
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		assertNotNull(db.getUserLastId);
+		assertNotNull(db.insertUser);
+		assertNotNull(db.checkLogin);
+		assertNotNull(db.updatePassword);
+		assertNotNull(db.addItem);
+		assertNotNull(db.getUserItems);
+		
+	}
+	/**
+	 * Tests whether or not a user is successfully inserted into the db 
+	 * Additionally tests whether a user can be successfully pulled from the db
+	 * @throws NoSuchAlgorithmException 
+	 * @throws UnsupportedEncodingException 
+	 */
+	public void testInsertUser() throws UnsupportedEncodingException, NoSuchAlgorithmException{
+		try{
+			db=new ThePostDAO("postTest");
+		}
+		catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		boolean insertUser = db.insertUser("Frank", "Underwood", "HouseCards", "washington");
+		System.out.println("InsertUser: "+ insertUser);
+		//assertEquals("Insert User:", true, insertUser);
+		
+		User instance = new User ("HouseCards", "washington");
+		User result = db.login(instance);
+		//		assertEquals("UserId:", 1, result.getId());
+		assertEquals("FirstName:", "Frank", result.getfName());
+		assertEquals("LastName:", "Underwood", result.getlName());
+		assertEquals("UserName:", "HouseCards", result.getUserName());
+		assertEquals("Password:", "[14, -46, -76, 6, -17, -62, 49, -66, 18, 112, -28, 5, -24, 108, -95, 74]", Arrays.toString(result.getEncodedPasswordBytes()));
+		assertEquals("isAdmin:", false, result.getIsAdmin());
+	}
+	/**
+	 * Tests the working of password updates
+	 * @throws NoSuchAlgorithmException 
+	 * @throws UnsupportedEncodingException 
+	 * 
+	 */
+	public void testUpdatePassword() throws UnsupportedEncodingException, NoSuchAlgorithmException{
+		try{
+			db = new ThePostDAO("postTest");
+			
+		}
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		boolean updatePasswordUser = db.insertUser("Fishy", "AndChips", "OliverTwist", "password");
+		//assertEquals("Create updatePasswordUser:", true, updatePasswordUser);
+		
+		User tempUser = new User("OliverTwist", "password");
+		User instanceUser = db.login(tempUser);
+		instanceUser.setPassword("goldfish");
+		db.updatePassword(instanceUser);
+		
+		User checkUser = db.login(instanceUser);
+		assertEquals("Username:", "OliverTwist", checkUser.getUserName());
+		assertEquals("Password:", Arrays.toString(instanceUser.getEncodedPasswordBytes()), Arrays.toString(checkUser.getEncodedPasswordBytes()));
+	}
+	
+	/**
+	 * Tests the viability of adding an item that is assigned to a specific user
+	 * Additionally tests whether or not the item is correctly pulled from the database
+	 * @throws UnsupportedEncodingException
+	 * @throws NoSuchAlgorithmException
+	 */
+	public void testAddItem() throws UnsupportedEncodingException, NoSuchAlgorithmException{
+	try{
+		db = new ThePostDAO("postTest");
+		
+	}
+	catch (Exception e){
+		e.printStackTrace();
+	}
+	
+	
+	boolean addItemUserInsert = db.insertUser("Hello", "Kitty", "hellokitty", "meow");
+	System.out.println("addItemUserInsert"+ addItemUserInsert);
+	User addItemUser = db.login(new User("hellokitty", "meow"));
+	int addItemUserId = addItemUser.getId();
+	boolean addItemPassed = db.addItem(addItemUserId, 12.50, "furniture", "its a hammock", "hammock.png", "myHammock");
+	assertEquals("addItemPassed:", true, addItemPassed);
+	User product = db.getUserItems(addItemUser);
+	assertEquals("UserId", addItemUserId, product.getId());
+	Item instance = product.getItemList().get(0);
+	Item other = new Item(1, addItemUserId, 12.50, "furniture", "its a hammock", "hammock.png", instance.getDate(), "myHammock");
+	//assertEquals("Item Compare id:", other.getItemId(), instance.getItemId());
+	assertEquals("Item Compare price:", other.getPrice(), instance.getPrice());
+	assertEquals("Item Compare type:", other.getType(), other.getType());
+	}
+	
+	
+	/**
+	 * Tests the removing of an object from the database
+	 */
+	public void testRemoveItem(){
+	    try{
+		db = new ThePostDAO("postTest");
+		
+	    }
+	    catch (Exception e){
+		e.printStackTrace();
+	    }
+	    int itemid = db.getLastItemId();
+	    System.out.println("Item Id: "+itemid);
+	    db.addItem(1, 12, "tree", "its a tree", "tree.png", "myTree");
+	    db.removeItem(itemid);
+	    boolean getItem = false;
+	    try{
+		getItem = db.getSingleItem(itemid).equals(null);
+	    }
+	    catch(NullPointerException e){
+		//  System.out.println("Get Item Null");
+		getItem = true;
+	    }
+	    
+	    assertEquals("Item removed", true, getItem);
+	    
+	}
+	
+	/**
+	 * Assesses the effectiveness of getting a single item from the database
+	 * @throws SQLException
+	 */
+	public void testGetSingleItem() throws SQLException{
+	    try{
+		db = new ThePostDAO("postTest");
+		System.out.print("1");
+	    }
+	    catch (Exception e){
+		e.printStackTrace();
+		System.out.print("1.5");
+	    }
+	    //		boolean added = db.addItem(1, 12.50, "Furniture", "desk", "desk.png", "MyDesk");
+	    //		assertEquals("True", true, added);
+	    System.out.print("2");
+	    int lastItem = db.getLastItemId();
+	    System.out.print("3");
+	    //System.out.println("lastItem: "+ lastItem);
+	    boolean added = db.addItem(1, 12.50, "Furniture", "desk", "desk.png", "MyDesk");
+	    System.out.print("4");
+	    //System.out.println("addItem: "+ added);
+	    Item instance = db.getSingleItem(lastItem);
+	    System.out.print("5");
+	    assertEquals("Item Title:", "MyDesk", instance.getTitle());
+	    System.out.print("6");
+	}
+
+
+    /**
+     * Assesses the working and accuracy of getting a Username from the database given userId
+     * @throws UnsupportedEncodingException
+     * @throws NoSuchAlgorithmException
+     */
+	public void testGetUsername() throws UnsupportedEncodingException, NoSuchAlgorithmException{
+	    try{
+		db = new ThePostDAO("postTest");
+		
+	    }
+	    catch (Exception e){
+		e.printStackTrace();
+	    }
+	    
+	    db.insertAdmin("Fishy", "McChips", "theFish", "yourChips");
+	    String resultUsername = db.getUsername(db.getUserLastId()-1);
+	    assertEquals("Username: ", "theFish", resultUsername);
+	    
+	}
+    /**
+     * Tests if getting the last x number of items is effective.
+     */
+	public void testGetLastTenItems(){
+	    try{
+		db = new ThePostDAO("postTest");
+		
+	    }
+	    catch (Exception e){
+		e.printStackTrace();
+	    }
+
+	    System.out.println("testGetTen");
+	    db.addItem(2, 10, "misc", "test0", "void.png", "0");
+	    db.addItem(2, 10, "misc", "test1", "void.png", "1");
+	    db.addItem(2, 10, "misc", "test2", "void.png", "2");
+	    db.addItem(2, 10, "misc", "test3", "void.png", "3");
+	    db.addItem(2, 10, "misc", "test4", "void.png", "4");
+	    db.addItem(2, 10, "misc", "test5", "void.png", "5");
+	    db.addItem(2, 10, "misc", "test6", "void.png", "6");
+	    db.addItem(2, 10, "misc", "test7", "void.png", "7");
+	    db.addItem(2, 10, "misc", "test8", "void.png", "8");
+	    db.addItem(2, 10, "misc", "test9", "void.png", "9");
+
+	    //#living with my bitches #live
+	    System.out.println("pre-db");
+	    ArrayList<Item> instance = new ArrayList<Item>(); 
+	    System.out.println("passing instance");
+	    instance = db.getLastTenItems();
+	    System.out.println("last1");
+	    String[] titles = new String[10];
+
+	    /*
+	    for(int i=9;i>=0;i--){
+		if(instance.get(i) != null){
+		    titles[i] = instance.get(i).getTitle();
+		    System.out.println("Title"+i+":"+titles[i]);
+		    assertEquals("Title"+ i+":", titles[i], i );
+		}
+		else{
+		    System.out.println("Title"+i+": nada");
+		    titles[i] = "nada";
+		}
+	    }
+	    */	    
+	    for(int i=0;i<=9;i++){
+		titles[i] = instance.get(i).getTitle();
+		System.out.println("passing titles");
+	    }
+	    assertEquals("Title:",titles[0],9);
+	    assertEquals("Title:",titles[1],8);
+	    assertEquals("Title:",titles[2],7);
+	    assertEquals("Title:",titles[3],6);
+	    assertEquals("Title:",titles[4],5);
+	    assertEquals("Title:",titles[5],4);
+	    assertEquals("Title:",titles[6],3);
+	    assertEquals("Title:",titles[7],2);
+	    assertEquals("Title:",titles[8],1);
+	    assertEquals("Title:",titles[9],0);
+
+
+	    
+	}
+	
+}

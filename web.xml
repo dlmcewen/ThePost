@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app>
 	<welcome-file-list>
-        <welcome-file>Login.jsp</welcome-file>
+        <welcome-file>index.jsp</welcome-file>
     </welcome-file-list>
   
   <servlet>
@@ -53,5 +53,127 @@
      <servlet-name>AddItemServlet</servlet-name>
      <url-pattern>/AddItemServlet</url-pattern>
   </servlet-mapping>
+  
+  <servlet>
+        <display-name>ViewUserItemsServlet</display-name>
+        <servlet-name>ViewUserItemsServlet</servlet-name>
+        <servlet-class>thepost.ViewUserItemsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>ViewUserItemsServlet</servlet-name>
+     <url-pattern>/ViewUserItemsServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+        <display-name>UpdateItemServlet</display-name>
+        <servlet-name>UpdateItemServlet</servlet-name>
+        <servlet-class>thepost.UpdateItemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>UpdateItemServlet</servlet-name>
+     <url-pattern>/UpdateItemServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+        <display-name>SearchServlet</display-name>
+        <servlet-name>SearchServlet</servlet-name>
+        <servlet-class>thepost.SearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>SearchServlet</servlet-name>
+     <url-pattern>/SearchServlet</url-pattern>
+  </servlet-mapping>
+
+<servlet>
+        <display-name>InitialSearchServlet</display-name>
+        <servlet-name>InitialSearchServlet</servlet-name>
+        <servlet-class>thepost.InitialSearchServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>InitialSearchServlet</servlet-name>
+     <url-pattern>/InitialSearchServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+        <display-name>SingleItemViewServlet</display-name>
+        <servlet-name>SingleItemViewServlet</servlet-name>
+        <servlet-class>thepost.SingleItemViewServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>SingleItemViewServlet</servlet-name>
+     <url-pattern>/SingleItemViewServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+        <display-name>RemoveItemServlet</display-name>
+        <servlet-name>RemoveItemServlet</servlet-name>
+        <servlet-class>thepost.RemoveItemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>RemoveItemServlet</servlet-name>
+     <url-pattern>/RemoveItemServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+        <display-name>ManageUsersServlet</display-name>
+        <servlet-name>ManageUsersServlet</servlet-name>
+        <servlet-class>thepost.ManageUsersServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>ManageUsersServlet</servlet-name>
+     <url-pattern>/ManageUsersServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+        <display-name>ManageItemsServlet</display-name>
+        <servlet-name>ManageItemsServlet</servlet-name>
+        <servlet-class>thepost.ManageItemsServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>ManageItemsServlet</servlet-name>
+     <url-pattern>/ManageItemsServlet</url-pattern>
+  </servlet-mapping>
+  
+  <servlet>
+        <display-name>RemoveUserServlet</display-name>
+        <servlet-name>RemoveUserServlet</servlet-name>
+        <servlet-class>thepost.RemoveUserServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>RemoveUserServlet</servlet-name>
+     <url-pattern>/RemoveUserServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+        <display-name>ResetUserPasswordServlet</display-name>
+        <servlet-name>ResetUserPasswordServlet</servlet-name>
+        <servlet-class>thepost.ResetUserPasswordServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>ResetUserPasswordServlet</servlet-name>
+     <url-pattern>/ResetUserPasswordServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+        <display-name>AdminUpdateItemServlet</display-name>
+        <servlet-name>AdminUpdateItemServlet</servlet-name>
+        <servlet-class>thepost.AdminUpdateItemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>AdminUpdateItemServlet</servlet-name>
+     <url-pattern>/AdminUpdateItemServlet</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+        <display-name>AdminRemoveItemServlet</display-name>
+        <servlet-name>AdminRemoveItemServlet</servlet-name>
+        <servlet-class>thepost.AdminRemoveItemServlet</servlet-class>
+  </servlet>
+  <servlet-mapping>
+     <servlet-name>AdminRemoveItemServlet</servlet-name>
+     <url-pattern>/AdminRemoveItemServlet</url-pattern>
+  </servlet-mapping>
+
+
     
 </web-app>
