@@ -1,3 +1,8 @@
+<!-- 
+- Project: ThePost
+- Author: Cameron Day
+- Code derived from: Twitter Bootstap (http://getbootstrap.com)
+-->
 
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"
